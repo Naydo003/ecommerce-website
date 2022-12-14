@@ -1,13 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import { BrowserRouter } from 'react-router-dom'    // This needs to be added for routing. The entire App is inside the Browser Router below
+
 import App from './App';
+import {UserProvider} from './contexts/user.context'
+import {ProductsProvider} from './contexts/products.context'
+import { CartProvider } from './contexts/cart.context';
+
+
+import './index.css';
 import reportWebVitals from './reportWebVitals';
 
+
+// In the following the ProductsProvider has access to the UserProvider data but not visa versa. We may want to modify what products we show different user for example based on location.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <UserProvider>
+        <ProductsProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </ProductsProvider>
+      </UserProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
