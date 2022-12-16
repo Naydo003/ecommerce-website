@@ -26,7 +26,7 @@ const SignInForm = () => {
       return 
     }
     try {
-      const {user} = await signInUserWithEmailAndPassword(email, password)
+      await signInUserWithEmailAndPassword(email, password)
 
       resetFormFields()
 

@@ -13,9 +13,9 @@ function App() {
   <Routes>
     <Route path='/' element={<Navigation />} >
       <Route index element={<Home />} />            {/* index just makes it appear with the path of parent, in this case '/' */}
-      <Route path='shop' element={<Shop />} />      {/* paths are relative to the parent path so this equates to '/shop' */}
+      <Route path='shop/*' element={<Shop />} />      {/* the * means anything. like params, the Shop component has nested Routes */}
       <Route path='auth' element={<Authentication />} /> 
-      <Route path='checkout' element={<Checkout />} />
+      <Route path='checkout' element={<Checkout />} />           {/* paths are relative to the parent path so this equates to '/checkout' */}
     </Route>
   </Routes>
   )

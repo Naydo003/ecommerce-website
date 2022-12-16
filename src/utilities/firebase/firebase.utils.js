@@ -11,7 +11,7 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth'
 
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore'
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -41,13 +41,42 @@ export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googlePro
 
 export const db = getFirestore()
 
+export const addCollectionAndDocuments = async ( collectionKey, objectsToAdd ) => {
+  const collectionRef = collection(db, collectionKey)
+  const batch = writeBatch(db)
+  
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase())
+    batch.set(docRef, object)
+  })
+
+  await batch.commit()
+  console.log('done')
+}
+
+// front end dev/ javascript dev is susectible to changes in say firestore. We are protecting ourself against onerous code changes by isolating all firebase code in here. Minimising impact from changing 3rd party libraries.
+// Apparently firebase have changed the way doc lookup has been done every major version renewal. You would think they would have made is simpler by now.
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories')
+
+  const q = query(collectionRef)                  // This horse shit is we create an object that represents our query, query(collectionRef, where("search criteria")), (so find all in collectionRef in our case), need to import where.
+  const querySnapshot = await getDocs(q)          //  then we get a snapshot of the entire query which includes the docs as snapshots. This all contains a lot of shit. We just need to access .docs and then .data() for each doc.
+
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {     // acc - accumilator, for each docSnapshot grab the title and the items. Fuck everything else off (ie reduce)
+    const { title, items } = docSnapshot.data()
+    acc[title.toLowerCase()] = items           // Bracket notation for onjects. This is like acc.title but because title is a variable we need to use acc[]. accumilator at the title value will be equal to the items. This is wierd object structure. {hats: [], jackets: []}
+    return acc
+  }, {})                         // starting value of acc is {} empty object
+
+  return categoryMap
+}
+
 export const createUserDocumentFromAuth = async (userAuth) => {
 
   if (!userAuth) return
   const userDocRef = doc(db, 'users', userAuth.uid )
   const userSnapshot = await getDoc(userDocRef)
-
-
 
   if(!userSnapshot.exists()) {
     const { displayName, email } = userAuth
@@ -70,6 +99,7 @@ export const createUserDocumentFromAuth = async (userAuth) => {
   return userDocRef
 }
 
+
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) {
     return
@@ -77,24 +107,6 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
   return await createUserWithEmailAndPassword(auth, email, password)
 }
 
-export const getUserDocumentFromAuth = async (userAuth) => {
-
-  if (!userAuth) return
-  const userDocRef = doc(db, 'users', userAuth.uid )
-  const userSnapshot = await getDoc(userDocRef)
-
-
-
-  if(!userSnapshot.exists()) {
-    const userDoc = userSnapshot.data()
-
-    // console.log("***************")
-    console.log(userDoc)
-
-  }
-
-  return userDocRef
-}
 
 export const signInUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) {

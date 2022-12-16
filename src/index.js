@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'    // This needs to be added fo
 
 import App from './App';
 import {UserProvider} from './contexts/user.context'
-import {ProductsProvider} from './contexts/products.context'
+import {CategoriesProvider} from './contexts/categories.context'
 import { CartProvider } from './contexts/cart.context';
 
 
@@ -15,17 +15,17 @@ import reportWebVitals from './reportWebVitals';
 // In the following the ProductsProvider has access to the UserProvider data but not visa versa. We may want to modify what products we show different user for example based on location.
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-        <ProductsProvider>
+        <CategoriesProvider>
           <CartProvider>
             <App />
           </CartProvider>
-        </ProductsProvider>
+        </CategoriesProvider>
       </UserProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

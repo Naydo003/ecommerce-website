@@ -63,6 +63,10 @@ export const CartProvider = ({children}) => {
   useEffect(() => {
     const newCartCount = cartItems.reduce((total, item) => total + item.quantity, 0)     // reduce(callback(count, element), starting value)
     setCartCount(newCartCount)
+  }, [cartItems])
+
+  // Apparently best practice to separate useEffect concerns. The code could be combined into the above useEffect though
+  useEffect(() => {
     const newTotalCount = cartItems.reduce((total, item) => total + ( item.quantity * item.price ), 0)
     setTotalCount(newTotalCount)
   }, [cartItems])

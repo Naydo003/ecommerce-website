@@ -21,27 +21,27 @@ export const UserProvider = ({children}) => {
   // On mount, the listener will be activated and on unmount the listener will be cleaned up by running once more to log sign-out. Maybe????
   
   useEffect(() => { 
-    console.log("useEffect running")
+    // console.log("useEffect running")
     onAuthStateChangedListener((user) => {
 
       if (user) {
         createUserDocumentFromAuth(user)
       }
       setCurrentUser(user)
-      console.log("********* subscribe listener ran **********")
-      console.log(user)
+      // console.log("********* subscribe listener ran **********")
+      // console.log(user)
     })
 
     return () => { 
-      console.log("return / cleanup running")
+      // console.log("return / cleanup running")
       onAuthStateChangedListener((user) => {
 
       if (user) {
         createUserDocumentFromAuth(user)
       }
       setCurrentUser(user)
-      console.log("********* unsubscribe listener ran **********")
-      console.log(user) 
+      // console.log("********* unsubscribe listener ran **********")
+      // console.log(user) 
     }) }                                               // when a return is provided in a useEffect function the return value is a cleanup function that runs once the component unmounts or stream is unsubscribed
   }, [  ])                                             // Effect will only run when what was inside [] changes. In this case none so only onMount.
 

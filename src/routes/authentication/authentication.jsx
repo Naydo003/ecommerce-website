@@ -1,7 +1,7 @@
 // import { useEffect } from 'react'
 // import { getRedirectResult } from 'firebase/auth'
 
-import { auth, signInWithGooglePopup, signInWithGoogleRedirect, createUserDocumentFromAuth } from '../../utilities/firebase/firebase.utils'
+// import { auth, signInWithGooglePopup, signInWithGoogleRedirect, createUserDocumentFromAuth } from '../../utilities/firebase/firebase.utils'
 // signInWithGoogleRedirect and auth not needed in above line as we are not using redirect.
 
 import SignUpForm from '../../components/sign-up-form/sign-up-form.component'

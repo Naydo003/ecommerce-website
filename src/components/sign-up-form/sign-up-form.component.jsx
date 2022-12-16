@@ -31,7 +31,7 @@ const SignUpForm = () => {
       // setCurrentUser(user)
 
       user.displayName = displayName
-      const userDocRef = await createUserDocumentFromAuth(user)
+      await createUserDocumentFromAuth(user)
       resetFormFields()
 
     } catch(error) {
