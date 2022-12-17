@@ -24,7 +24,11 @@ const CheckoutItem = ({item}) => {
       </div>
       <span className="name">{name}</span>
       <span className="quantity">
-        <div className="arrow" onClick={removeItemHandler}>&#10094;</div>
+        {quantity === 0 ? (
+          <div className="arrow--disabled">&#10094;</div>
+        ) : (
+          <div className="arrow" onClick={removeItemHandler}>&#10094;</div>
+        )}
         <span className="value">{quantity}</span>
         <div className="arrow" onClick={addItemHandler}>&#10095;</div>
         </span>

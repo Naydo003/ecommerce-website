@@ -4,9 +4,9 @@ import { BrowserRouter } from 'react-router-dom'    // This needs to be added fo
 
 import App from './App';
 import {UserProvider} from './contexts/user.context'
-import {CategoriesProvider} from './contexts/categories.context'
 import { CartProvider } from './contexts/cart.context';
-
+import { Elements } from '@stripe/react-stripe-js'
+import { stripePromise } from './utilities/stripe/stripe.utils'
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -18,11 +18,11 @@ root.render(
   // <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-        <CategoriesProvider>
           <CartProvider>
-            <App />
+            <Elements stripe={stripePromise}>
+              <App />
+            </Elements>
           </CartProvider>
-        </CategoriesProvider>
       </UserProvider>
     </BrowserRouter>
   // </React.StrictMode>

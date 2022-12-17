@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useReducer } from "react";
 
 
 const addCartItem = (cartItems, productToAdd) => {
@@ -22,7 +22,11 @@ const removeCartItem = (cartItems, productToRemove) => {
   )
 
   if (existingCartItem.quantity === 0) {
-    return
+    return cartItems.map((item) =>
+    item.id === productToRemove.id 
+      ? { ...item, quantity: item.quantity } 
+      : item
+  )
   }
 
   return cartItems.map((item) =>
@@ -52,37 +56,68 @@ export const CartContext = createContext({
   clearProductFromCart: () => {}
 })
 
+
+// Reducers only store readable values!
+const INITIAL_STATE = {
+  isCartOpen: false,
+  cartItems: [],
+  cartCount: 0,
+  totalCount: 0,
+}
+
+// Reducer should not handle any business logic! Reducer should only update state.
+const cartReducer = (state, action) => {
+  const { type, payload } = action
+
+  switch(type) {
+
+    case 'SET_CART_ITEMS':
+      return {
+        ...state,
+        ...payload,
+      }
+    case 'SET_IS_CART_OPEN':
+      return {
+        ...state,
+        isCartOpen: payload,
+      }
+    default:
+      throw new Error(`unhandled type of ${type} in cartReducer`)
+  }
+}
+
 export const CartProvider = ({children}) => {
+  // this is const [ state, dispatch ] = ... with state deconstructed out.
+  const [ { cartItems, isCartOpen, cartCount, totalCount }, dispatch ] = useReducer(cartReducer, INITIAL_STATE)  
 
-  const [ isCartOpen, setIsCartOpen ] = useState(false)
-  const [ cartItems, setCartItems ] = useState([])
-  const [ cartCount, setCartCount ] = useState(0)
-  const [ totalCount, setTotalCount ] = useState(0)
+  // All business logic done here
+  const updateCartItemsReducer = (newCartItems) => {
 
-  // There are ways to do this that don't require useEffect. Could expose a function that will always reduce cart items..
-  useEffect(() => {
-    const newCartCount = cartItems.reduce((total, item) => total + item.quantity, 0)     // reduce(callback(count, element), starting value)
-    setCartCount(newCartCount)
-  }, [cartItems])
+    const newCartCount = newCartItems.reduce((total, item) => total + item.quantity, 0) 
+    const newTotalCount = newCartItems.reduce((total, item) => total + ( item.quantity * item.price ), 0)
 
-  // Apparently best practice to separate useEffect concerns. The code could be combined into the above useEffect though
-  useEffect(() => {
-    const newTotalCount = cartItems.reduce((total, item) => total + ( item.quantity * item.price ), 0)
-    setTotalCount(newTotalCount)
-  }, [cartItems])
+    dispatch({ type: 'SET_CART_ITEMS', payload: {cartItems: newCartItems, cartCount: newCartCount, totalCount: newTotalCount}})
+  }
+
 
   const addItemToCart = (productToAdd) => {
-    setCartItems(addCartItem(cartItems, productToAdd))
+    const newCartItems = addCartItem(cartItems, productToAdd)
+    updateCartItemsReducer(newCartItems)
   }
 
   const removeItemFromCart = (itemToRemove) => {
-    setCartItems(removeCartItem(cartItems, itemToRemove))
+    const newCartItems = removeCartItem(cartItems, itemToRemove)
+    updateCartItemsReducer(newCartItems)
   }
 
   const clearProductFromCart = (productToRemove) => {
-    setCartItems(clearCartProduct(cartItems, productToRemove))
+    const newCartItems = clearCartProduct(cartItems, productToRemove)
+    updateCartItemsReducer(newCartItems)
   }
 
+  const setIsCartOpen = (bool) => {
+    dispatch({type: 'SET_IS_CART_OPEN', payload: bool})
+  }
 
   const value = { isCartOpen, setIsCartOpen, cartItems, addItemToCart, cartCount, totalCount, removeItemFromCart, clearProductFromCart }
 
