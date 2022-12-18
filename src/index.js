@@ -8,7 +8,7 @@ import { CartProvider } from './contexts/cart.context';
 import { Elements } from '@stripe/react-stripe-js'
 import { stripePromise } from './utilities/stripe/stripe.utils'
 
-import './index.css';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
 
 

@@ -1,6 +1,8 @@
+import { memo } from 'react'        // memo is a optimisation tool that stops stops unnecessary re-rendering
+
 import './cart-item.styles.scss'
 
-const CartItem = ({cartItem}) => {
+const CartItem = memo(({cartItem}) => {
   const {name, quantity, price, imageUrl} = cartItem
 
   return (
@@ -12,6 +14,6 @@ const CartItem = ({cartItem}) => {
       </div>
     </div>
   )
-}
+})
 
 export default CartItem
